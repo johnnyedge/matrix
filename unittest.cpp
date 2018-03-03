@@ -63,6 +63,7 @@ TEST(matrix, matrix_multiply)
         }
     }
 
+    EXPECT_THROW(m * m, std::logic_error);
     n = m.transpose();
 
     p = m * n;
