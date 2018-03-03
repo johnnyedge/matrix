@@ -2,13 +2,15 @@
 
 #include "matrix.h"
 
+static const int TEST_CYCLES = 100;
+
 TEST(matrix, basic)
 {
     EXPECT_THROW(matrix<int>(0, 0), std::logic_error);
     EXPECT_THROW(matrix<int>(0, 1), std::logic_error);
     EXPECT_THROW(matrix<int>(1, 0), std::logic_error);
 
-    for (int c = 0; c < 100; c++) {
+    for (int c = 0; c < TEST_CYCLES; c++) {
         const int rows = 1 + rand() % 100;
         const int cols = 1 + rand() % 100;
 
@@ -47,7 +49,7 @@ TEST(matrix, basic)
 
 TEST(matrix, equality)
 {
-    for (int c = 0; c < 100; c++) {
+    for (int c = 0; c < TEST_CYCLES; c++) {
         const int rows = 1 + rand() % 100;
         const int cols = 1 + rand() % 100;
 
@@ -90,7 +92,7 @@ TEST(matrix, equality)
 
 TEST(matrix, transpose)
 {
-    for (int c = 0; c < 100; c++) {
+    for (int c = 0; c < TEST_CYCLES; c++) {
         const int rows = 1 + rand() % 100;
         const int cols = 1 + rand() % 100;
 
@@ -128,54 +130,59 @@ TEST(matrix, transpose)
 
 TEST(matrix, matrix_multiply)
 {
-    matrix<int> m(4, 3);
-    matrix<int> n, p;
+    for (int c = 0; c < TEST_CYCLES; c++) {
+        const int rows = 1 + rand() % 20;
+        const int cols = 1 + rand() % 20;
 
-    m.transform(
-        []
-        (const std::size_t row,
-         const std::size_t col,
-         const int /* ignored */)
-        {
-            return row * 3 + col;
-        });
+        matrix<int> m(rows, cols);
+        matrix<int> n, p, v;
 
-    EXPECT_THROW(m * m, std::logic_error);
-    n = m.transpose();
+        m.transform(
+            [cols]
+            (const std::size_t row,
+             const std::size_t col,
+             const int /* ignored */)
+            {
+                return row * cols + col;
+            });
 
-    p = m * n;
+        if (rows != cols) {
+            EXPECT_THROW(m * m, std::logic_error);
+        }
 
-    EXPECT_EQ(p.size().first, m.size().first);
-    EXPECT_EQ(p.size().second, n.size().second);
+        n = m.transpose();
+        p = m * n;
 
-    /*
-     *  0  1  2     0  3  6  9      5  14  23  32
-     *  3  4  5  *  1  4  7 10  =  14  50  86 122
-     *  6  7  8     2  5  8 11     23  86 149 212
-     *  9 10 11                    32 122 212 302
-     */
+        ASSERT_EQ(p.size().first, m.size().first);
+        ASSERT_EQ(p.size().second, n.size().second);
 
-    EXPECT_EQ(p.at(0, 0),   5);
-    EXPECT_EQ(p.at(0, 1),  14);
-    EXPECT_EQ(p.at(0, 2),  23);
-    EXPECT_EQ(p.at(0, 3),  32);
-    EXPECT_EQ(p.at(1, 0),  14);
-    EXPECT_EQ(p.at(1, 1),  50);
-    EXPECT_EQ(p.at(1, 2),  86);
-    EXPECT_EQ(p.at(1, 3), 122);
-    EXPECT_EQ(p.at(2, 0),  23);
-    EXPECT_EQ(p.at(2, 1),  86);
-    EXPECT_EQ(p.at(2, 2), 149);
-    EXPECT_EQ(p.at(2, 3), 212);
-    EXPECT_EQ(p.at(3, 0),  32);
-    EXPECT_EQ(p.at(3, 1), 122);
-    EXPECT_EQ(p.at(3, 2), 212);
-    EXPECT_EQ(p.at(3, 3), 302);
+        v = matrix<int>(p.size().first, p.size().second);
+
+        m.foreach(
+            [&v, n, cols]
+            (const std::size_t m_row,
+             const std::size_t m_col,
+             const int m_val)
+            {
+                n.foreach(
+                    [&v, cols, m_row, m_col, m_val]
+                    (const std::size_t n_row,
+                     const std::size_t n_col,
+                     const int n_val)
+                    {
+                        if (m_col == n_row) {
+                            v.at(m_row, n_col) += m_val * n_val;
+                        }
+                    });
+            });
+
+        EXPECT_EQ(p, v);
+    }
 }
 
 TEST(matrix, scalar_multiply)
 {
-    for (int c = 0; c < 100; c++) {
+    for (int c = 0; c < TEST_CYCLES; c++) {
         const int rows = 1 + rand() % 100;
         const int cols = 1 + rand() % 100;
 
