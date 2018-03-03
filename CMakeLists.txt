@@ -65,6 +65,18 @@ target_link_libraries(unittest gtest_main gtest pthread)
 add_custom_target(run_tests ALL unittest)
 
 #
+# generate html documentation using doxygen
+# try to open the user's web browser using xdg-open
+# to display the documentation
+#
+add_custom_target(
+  doxygen
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/doxygen
+  COMMAND doxygen Doxyfile
+  COMMAND xdg-open ${CMAKE_BINARY_DIR}/doxygen/html/classmatrix.html
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+#
 # add a target to install the library. due to the templated
 # nature of the matrix object, all functionality is inline
 # and no library is generated, i.e. only headers are required.
