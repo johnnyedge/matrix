@@ -41,7 +41,7 @@ matrix<T>::matrix(const matrix & other)
 }
 
 template <typename T>
-matrix<T>::matrix(const matrix && other)
+matrix<T>::matrix(matrix && other)
     : _elements(std::move(other._elements)), _order(other._order)
 {
 }
@@ -284,7 +284,8 @@ matrix<T>::foreach(const std::function<bool(size_type, size_type,
 
     for (i = 0; i < size().first; i++) {
         for (j = 0; j < size().second; j++) {
-            if (!each(i, j, (*this)(i, j))) {
+            if (each != nullptr &&
+                !each(i, j, (*this)(i, j))) {
                 break;
             }
         }
