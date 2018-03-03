@@ -15,13 +15,13 @@ TEST(matrix, basic)
 
     for (int i = 0; i < m.rows(); i++) {
         for (int j = 0; j < m.columns(); j++) {
-            m.at(i, j) = i * m.rows() + j;
+            m.at(i, j) = i * m.columns() + j;
         }
     }
 
     for (int i = 0; i < m.rows(); i++) {
         for (int j = 0; j < m.columns(); j++) {
-            EXPECT_EQ(m.at(i, j), i * m.rows() + j);
+            EXPECT_EQ(m.at(i, j), i * m.columns() + j);
         }
     }
 }
@@ -36,7 +36,7 @@ TEST(matrix, transpose)
 
     for (int i = 0; i < m.rows(); i++) {
         for (int j = 0; j < m.columns(); j++) {
-            m.at(i, j) = i * m.rows() + j;
+            m.at(i, j) = i * m.columns() + j;
         }
     }
 
@@ -59,7 +59,7 @@ TEST(matrix, matrix_multiply)
 
     for (int i = 0; i < m.rows(); i++) {
         for (int j = 0; j < m.columns(); j++) {
-            m.at(i, j) = i * m.rows() + j;
+            m.at(i, j) = i * m.columns() + j;
         }
     }
 
@@ -70,6 +70,30 @@ TEST(matrix, matrix_multiply)
 
     EXPECT_EQ(p.rows(), m.rows());
     EXPECT_EQ(p.columns(), n.columns());
+
+    /*
+     *  0  1  2     0  3  6  9      5  14  23  32
+     *  3  4  5  *  1  4  7 10  =  14  50  86 122
+     *  6  7  8     2  5  8 11     23  86 149 212
+     *  9 10 11                    32 122 212 302
+     */
+
+    EXPECT_EQ(p.at(0, 0),   5);
+    EXPECT_EQ(p.at(0, 1),  14);
+    EXPECT_EQ(p.at(0, 2),  23);
+    EXPECT_EQ(p.at(0, 3),  32);
+    EXPECT_EQ(p.at(1, 0),  14);
+    EXPECT_EQ(p.at(1, 1),  50);
+    EXPECT_EQ(p.at(1, 2),  86);
+    EXPECT_EQ(p.at(1, 3), 122);
+    EXPECT_EQ(p.at(2, 0),  23);
+    EXPECT_EQ(p.at(2, 1),  86);
+    EXPECT_EQ(p.at(2, 2), 149);
+    EXPECT_EQ(p.at(2, 3), 212);
+    EXPECT_EQ(p.at(3, 0),  32);
+    EXPECT_EQ(p.at(3, 1), 122);
+    EXPECT_EQ(p.at(3, 2), 212);
+    EXPECT_EQ(p.at(3, 3), 302);
 }
 
 TEST(matrix, scalar_multiply)
@@ -79,7 +103,7 @@ TEST(matrix, scalar_multiply)
 
     for (int i = 0; i < m.rows(); i++) {
         for (int j = 0; j < m.columns(); j++) {
-            m.at(i, j) = i * m.rows() + j;
+            m.at(i, j) = i * m.columns() + j;
         }
     }
 
