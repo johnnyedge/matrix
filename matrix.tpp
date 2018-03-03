@@ -207,7 +207,7 @@ matrix<T>::size(void) const
     size_type rows, cols;
 
     rows = _elements.size();
-    cols = rows ? _elements.at(0).size() : 0;
+    cols = rows ? _elements[0].size() : 0;
 
     if (_order == COLS) {
         std::swap(rows, cols);
