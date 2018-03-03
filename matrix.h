@@ -6,8 +6,10 @@
  */
 #pragma once
 
+#include <vector>
 #include <functional>
 #include <cstddef>
+#include <utility>
 
 template <typename T>
 class matrix

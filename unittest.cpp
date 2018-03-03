@@ -6,15 +6,16 @@ static const int TEST_CYCLES = 100;
 
 TEST(matrix, basic)
 {
-    EXPECT_THROW(matrix<int>(0, 0), std::logic_error);
-    EXPECT_THROW(matrix<int>(0, 1), std::logic_error);
-    EXPECT_THROW(matrix<int>(1, 0), std::logic_error);
+    EXPECT_NO_THROW(matrix<int>(0, 0));
 
     for (int c = 0; c < TEST_CYCLES; c++) {
         const int rows = 1 + rand() % 100;
         const int cols = 1 + rand() % 100;
 
         matrix<int> m(rows, cols);
+
+        EXPECT_THROW(matrix<int>(0, cols), std::logic_error);
+        EXPECT_THROW(matrix<int>(rows, 0), std::logic_error);
 
         EXPECT_EQ(m.size().first, rows);
         EXPECT_EQ(m.size().second, cols);
@@ -148,6 +149,8 @@ TEST(matrix, matrix_multiply)
 
         if (rows != cols) {
             EXPECT_THROW(m * m, std::logic_error);
+        } else {
+            EXPECT_NO_THROW(m * m);
         }
 
         n = m.transpose();

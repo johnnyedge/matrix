@@ -1,7 +1,9 @@
 #pragma once
 
 #include <type_traits>
-#include <utility>
+#include <algorithm>
+#include <sstream>
+#include <stdexcept>
 
 template <typename T>
 matrix<T>::~matrix(void)
@@ -10,19 +12,21 @@ matrix<T>::~matrix(void)
 
 template <typename T>
 matrix<T>::matrix(void)
-    : _elements(), _order(ROWS)
+    : matrix(0, 0)
 {
+    static_assert(std::is_unsigned<size_type>::value,
+                  "size_type must be an unsigned integral type");
+
+    static_assert(std::is_integral<element_type>::value,
+                  "matrix elements must be of integral type");
 }
 
 template <typename T>
 matrix<T>::matrix(const size_type rows, const size_type cols)
 {
-    static_assert(std::is_integral<element_type>::value,
-                  "matrix template parameter must be integral type");
-
-    if (rows == 0 || cols == 0) {
-        throw std::invalid_argument(
-            "matrix must have at least 1 row and 1 column");
+    if (rows != cols && (!rows || !cols)) {
+        throw std::domain_error(
+            "non-empty matrix must have non-zero number of rows and columns");
     }
 
     _elements = std::vector<std::vector<element_type>>(
@@ -116,8 +120,14 @@ matrix<T> matrix<T>::multiply(const matrix<element_type> & rhs) const
     matrix<element_type> res(m, n);
 
     if (p != rhs.size().first) {
-        throw std::domain_error(
-            "matrix multiplication column/row mismatch");
+        std::stringstream ss;
+
+        ss << "incompatible dimensions for matrix multiplication: ";
+        ss << "(" << m << "x" << p << ")";
+        ss << " vs. ";
+        ss << "(" << rhs.size().first << "x" << n << ")";
+
+        throw std::domain_error(ss.str());
     }
 
     for (size_type i = 0; i < m; i++) {
@@ -168,7 +178,7 @@ matrix<T> & matrix<T>::operator *=(const element_type & rhs)
         [&rhs]
         (const size_type /* ignored */,
          const size_type /* ignored */,
-         const int val)
+         const element_type val)
         {
             return val * rhs;
         });
