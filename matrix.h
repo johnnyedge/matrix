@@ -11,6 +11,18 @@
 #include <cstddef>
 #include <utility>
 
+#if !defined(__cplusplus)
+#error "Unable to determine C++ version in use"
+#elif __cplusplus < 201103L
+#error "C++11 is required to build this library"
+#elif __cplusplus > 201103L
+#warning "This library has only been tested with C++11"
+#else
+/*
+ * c++11 is in use, away we go!
+ */
+#endif
+
 template <typename T>
 class matrix
 {
