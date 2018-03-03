@@ -147,20 +147,27 @@ TEST(matrix, matrix_multiply)
 
 TEST(matrix, scalar_multiply)
 {
-    matrix<int> m(4, 3);
-    matrix<int> n;
+    for (int c = 0; c < 100; c++) {
+        const int rows = 1 + rand() % 100;
+        const int cols = 1 + rand() % 100;
 
-    for (int i = 0; i < m.size().first; i++) {
-        for (int j = 0; j < m.size().second; j++) {
-            m.at(i, j) = i * m.size().second + j;
+        matrix<int> m(rows, cols);
+        matrix<int> n;
+        int v;
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                m.at(i, j) = i * cols + j;
+            }
         }
-    }
 
-    n = m * 3;
+        v = rand() % 100;
+        n = m * v;
 
-    for (int i = 0; i < m.size().first; i++) {
-        for (int j = 0; j < m.size().second; j++) {
-            EXPECT_EQ(n.at(i, j), 3 * m.at(i, j));
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                EXPECT_EQ(n.at(i, j), v * m.at(i, j));
+            }
         }
     }
 }
