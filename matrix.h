@@ -24,6 +24,9 @@ public:
     matrix<element_type> & operator =(const matrix<element_type> & rhs);
     matrix<element_type> & operator =(matrix<element_type> && rhs);
 
+    element_type & operator ()(size_type row, size_type col);
+    const element_type & operator ()(size_type row, size_type col) const;
+
     element_type & at(size_type row, size_type col);
     const element_type & at(size_type row, size_type col) const;
 
@@ -36,6 +39,9 @@ public:
 
     matrix<element_type> operator *(const element_type & rhs) const;
     matrix<element_type> & operator *=(const element_type & rhs);
+
+    bool operator ==(const matrix<element_type> & rhs) const;
+    bool operator !=(const matrix<element_type> & rhs) const;
 
     size_type rows(void) const;
     size_type columns(void) const;

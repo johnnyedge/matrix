@@ -59,6 +59,23 @@ matrix<T> & matrix<T>::operator =(matrix && rhs)
 }
 
 template <typename T>
+T & matrix<T>::operator ()(const size_type row, const size_type col)
+{
+    const matrix<element_type> & _this = *this;
+    return const_cast<element_type &>(_this(row, col));
+}
+
+template <typename T>
+const T & matrix<T>::operator ()(size_type row, size_type col) const
+{
+    if (_order == COLS) {
+        std::swap(row, col);
+    }
+
+    return _elements[row][col];
+}
+
+template <typename T>
 T & matrix<T>::at(const size_type row, const size_type col)
 {
     const matrix<element_type> & _this = *this;
@@ -144,6 +161,31 @@ matrix<T> & matrix<T>::operator *=(const element_type & rhs)
     }
 
     return *this;
+}
+
+template <typename T>
+bool matrix<T>::operator ==(const matrix<element_type> & rhs) const
+{
+    if (rows() != rhs.rows() ||
+        columns() != rhs.columns()) {
+        return false;
+    }
+
+    for (int i = 0; i < rows(); i++) {
+        for (int j = 0; j < columns(); j++) {
+            if (at(i, j) != rhs.at(i, j)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+template <typename T>
+bool matrix<T>::operator !=(const matrix<element_type> & rhs) const
+{
+    return !operator ==(rhs);
 }
 
 template <typename T>
