@@ -112,11 +112,11 @@ matrix<T> matrix<T>::multiply(const matrix<element_type> & rhs) const
 
     for (int i = 0; i < res.rows(); i++) {
         for (int j = 0; j < res.columns(); j++) {
-            element_type & sum = res.at(i, j);
+            element_type & sum = res(i, j);
 
             sum = 0;
             for (int k = 0; k < columns(); k++) {
-                sum += at(i, k) * rhs.at(k, j);
+                sum += (*this)(i, k) * rhs(k, j);
             }
         }
     }
@@ -156,7 +156,7 @@ matrix<T> & matrix<T>::operator *=(const element_type & rhs)
 {
     for (int i = 0; i < rows(); i++) {
         for (int j = 0; j < columns(); j++) {
-            at(i, j) *= rhs;
+            (*this)(i, j) *= rhs;
         }
     }
 
@@ -173,7 +173,7 @@ bool matrix<T>::operator ==(const matrix<element_type> & rhs) const
 
     for (int i = 0; i < rows(); i++) {
         for (int j = 0; j < columns(); j++) {
-            if (at(i, j) != rhs.at(i, j)) {
+            if ((*this)(i, j) != rhs(i, j)) {
                 return false;
             }
         }
