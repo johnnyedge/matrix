@@ -71,32 +71,34 @@ TEST(matrix, equality)
 
 TEST(matrix, transpose)
 {
-    matrix<int> m(4, 3);
-    matrix<int> t;
+    for (int c = 0; c < 100; c++) {
+        const int rows = 1 + rand() % 100;
+        const int cols = 1 + rand() % 100;
 
-    EXPECT_EQ(m.size().first, 4);
-    EXPECT_EQ(m.size().second, 3);
+        matrix<int> m(rows, cols);
+        matrix<int> t;
 
-    for (int i = 0; i < m.size().first; i++) {
-        for (int j = 0; j < m.size().second; j++) {
-            m.at(i, j) = i * m.size().second + j;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                m.at(i, j) = rand();
+            }
         }
-    }
 
-    t = m.transpose();
+        t = m.transpose();
 
-    EXPECT_EQ(m.size().first, t.size().second);
-    EXPECT_EQ(m.size().second, t.size().first);
+        EXPECT_EQ(m.size().first, t.size().second);
+        EXPECT_EQ(m.size().second, t.size().first);
 
-    for (int i = 0; i < m.size().first; i++) {
-        for (int j = 0; j < m.size().second; j++) {
-            EXPECT_EQ(m.at(i, j), t.at(j, i));
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                EXPECT_EQ(m.at(i, j), t.at(j, i));
+            }
         }
+
+        t = t.transpose();
+
+        EXPECT_EQ(m, t);
     }
-
-    t = t.transpose();
-
-    EXPECT_EQ(m, t);
 }
 
 TEST(matrix, matrix_multiply)
