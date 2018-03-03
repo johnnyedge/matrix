@@ -8,32 +8,38 @@ TEST(matrix, basic)
     EXPECT_THROW(matrix<int>(0, 1), std::logic_error);
     EXPECT_THROW(matrix<int>(1, 0), std::logic_error);
 
-    matrix<int> m(4, 3);
+    for (int c = 0; c < 100; c++) {
+        const int rows = 1 + rand() % 100;
+        const int cols = 1 + rand() % 100;
 
-    EXPECT_EQ(m.size().first, 4);
-    EXPECT_EQ(m.size().second, 3);
+        matrix<int> m(rows, cols);
 
-    for (int i = 0; i < m.size().first; i++) {
-        for (int j = 0; j < m.size().second; j++) {
-            m.at(i, j) = i * m.size().second + j;
+        EXPECT_EQ(m.size().first, rows);
+        EXPECT_EQ(m.size().second, cols);
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                m.at(i, j) = i * cols + j;
+            }
         }
-    }
 
-    for (int i = 0; i < m.size().first; i++) {
-        for (int j = 0; j < m.size().second; j++) {
-            EXPECT_EQ(m.at(i, j), i * m.size().second + j);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                EXPECT_EQ(m.at(i, j), i * cols + j);
+            }
         }
+
+        EXPECT_THROW(m.at(rows, 0), std::out_of_range);
+        EXPECT_THROW(m.at(0, cols), std::out_of_range);
+        EXPECT_THROW(m.at(rows, cols), std::out_of_range);
+
+        m.clear();
+
+        EXPECT_TRUE(m.empty());
+
+        EXPECT_EQ(m.size().first, 0);
+        EXPECT_EQ(m.size().second, 0);
     }
-
-    EXPECT_THROW(m.at(m.size().first, 0), std::out_of_range);
-    EXPECT_THROW(m.at(0, m.size().second), std::out_of_range);
-
-    m.clear();
-
-    EXPECT_TRUE(m.empty());
-
-    EXPECT_EQ(m.size().first, 0);
-    EXPECT_EQ(m.size().second, 0);
 }
 
 TEST(matrix, equality)
