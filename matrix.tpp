@@ -110,15 +110,7 @@ matrix<T> matrix<T>::multiply(const matrix<element_type> & rhs) const
 template <typename T>
 matrix<T> matrix<T>::multiply(const element_type & rhs) const
 {
-    matrix<element_type> res(rows(), columns());
-
-    for (int i = 0; i < rows(); i++) {
-        for (int j = 0; j < columns(); j++) {
-            res.at(i, j) = at(i, j) * rhs;
-        }
-    }
-
-    return res;
+    return *this * rhs;
 }
 
 template <typename T>
@@ -130,19 +122,28 @@ matrix<T> matrix<T>::operator *(const matrix<element_type> & rhs) const
 template <typename T>
 matrix<T> & matrix<T>::operator *=(const matrix<element_type> & rhs)
 {
-    return *this = multiply(rhs);
+    *this = multiply(rhs);
+    return *this;
 }
 
 template <typename T>
 matrix<T> matrix<T>::operator *(const element_type & rhs) const
 {
-    return multiply(rhs);
+    matrix<element_type> m(*this);
+    m *= rhs;
+    return m;
 }
 
 template <typename T>
 matrix<T> & matrix<T>::operator *=(const element_type & rhs)
 {
-    return *this = multiply(rhs);
+    for (int i = 0; i < rows(); i++) {
+        for (int j = 0; j < columns(); j++) {
+            at(i, j) *= rhs;
+        }
+    }
+
+    return *this;
 }
 
 template <typename T>
