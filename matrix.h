@@ -297,15 +297,49 @@ public:
                                                     element_type)> & xfrm);
 
 private:
+    /*!
+     * @brief Enumeration denoting whether the matrix is
+     *        stored by rows or by columns
+     */
     typedef enum
     {
         ROWS,
         COLS,
     } order_type;
 
+    /*!
+     * @brief Internal representation of the matrix
+     *
+     * The matrix is represented internally as a two-dimensional array
+     * using a `std::vector` of `std::vector`'s. The "inner" vector, the
+     * one actually containing elements, can represent either rows or
+     * columns, depending on the specified order. The benefit of this
+     * is that the matrix can be transposed simply by changing the order.
+     *
+     * @see transpose()
+     */
     std::vector<std::vector<element_type>> _elements;
+    /*!
+     * @brief Variable denoting the order in which matrix elements are stored
+     */
     order_type _order;
 
+    /*!
+     * @brief Call a function for each element in matrix with the ability
+     *        to stop the processing before all elements have been visited
+     *
+     * @param[in] each The function, lambda, etc. to call for each
+     *                 element in the matrix. The function is supplied
+     *                 with the row, column, and value for each element.
+     *                 The function returns `true` to continue to the next
+     *                 element and `false` to stop processing.
+     *
+     * @return A pair denoting the indicies of the last element
+     *         visited/processed when the called function returned `false`.
+     *         If the called function did not return `false`, then the
+     *         returned value will be equivalent to the result of the size()
+     *         member function.
+     */
     std::pair<size_type, size_type> foreach(
         const std::function<bool(size_type, size_type,
                                  element_type)> & each) const;
