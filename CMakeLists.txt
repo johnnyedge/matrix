@@ -10,6 +10,7 @@ ExternalProject_Add(
   PREFIX ${GTEST_PREFIX}
   CMAKE_CACHE_DEFAULT_ARGS -DCMAKE_INSTALL_PREFIX:STRING=${GTEST_INSTALL_DIR}
   LOG_INSTALL 1)
+file(MAKE_DIRECTORY ${GTEST_INSTALL_DIR}/include)
 
 add_library(gtest STATIC IMPORTED)
 set_target_properties(
@@ -17,21 +18,14 @@ set_target_properties(
   PROPERTIES
   IMPORTED_LOCATION ${GTEST_INSTALL_DIR}/lib/libgtest.a
   INTERFACE_INCLUDE_DIRECTORIES ${GTEST_INSTALL_DIR}/include)
+add_dependencies(gtest googletest)
 add_library(gtest_main STATIC IMPORTED)
 set_target_properties(
   gtest_main
   PROPERTIES
   IMPORTED_LOCATION ${GTEST_INSTALL_DIR}/lib/libgtest_main.a)
+add_dependencies(gtest_main googletest)
 
-add_executable(
-  unittest
-  EXCLUDE_FROM_ALL
-  unittest.cpp)
-
-target_link_libraries(
-  unittest
-  gtest_main gtest pthread)
-
-add_custom_target(
-  run_tests
-  unittest)
+add_executable(unittest EXCLUDE_FROM_ALL unittest.cpp)
+target_link_libraries(unittest gtest_main gtest pthread)
+add_custom_target(run_tests ALL unittest)
