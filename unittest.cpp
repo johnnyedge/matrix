@@ -44,27 +44,29 @@ TEST(matrix, basic)
 
 TEST(matrix, equality)
 {
-    const int rows = 1 + rand() % 100;
-    const int cols = 1 + rand() % 100;
+    for (int c = 0; c < 100; c++) {
+        const int rows = 1 + rand() % 100;
+        const int cols = 1 + rand() % 100;
 
-    matrix<int> m(rows, cols);
-    matrix<int> n(rows, cols);
-    matrix<int> x(rows, cols);
+        matrix<int> m(rows, cols);
+        matrix<int> n(rows, cols);
+        matrix<int> x(rows, cols);
 
-    int v;
+        int v;
 
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            m.at(i, j) = n(i, j) = rand();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                m.at(i, j) = n(i, j) = rand();
+            }
         }
+
+        EXPECT_EQ(m, n);
+        EXPECT_NE(m, x);
+        EXPECT_NE(n, x);
+
+        n(rand() % rows, rand() % cols)++;
+        EXPECT_NE(m, n);
     }
-
-    EXPECT_EQ(m, n);
-    EXPECT_NE(m, x);
-    EXPECT_NE(n, x);
-
-    n(rand() % rows, rand() % cols)++;
-    EXPECT_NE(m, n);
 }
 
 TEST(matrix, transpose)
