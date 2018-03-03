@@ -21,7 +21,7 @@ matrix<T>::matrix(const size_type rows, const size_type cols)
                   "matrix template parameter must be integral type");
 
     if (rows == 0 || cols == 0) {
-        throw std::logic_error(
+        throw std::invalid_argument(
             "matrix must have at least 1 row and 1 column");
     }
 
@@ -89,7 +89,7 @@ matrix<T> matrix<T>::multiply(const matrix<element_type> & rhs) const
     matrix<element_type> res(rows(), rhs.columns());
 
     if (columns() != rhs.rows()) {
-        throw std::logic_error(
+        throw std::domain_error(
             "matrix multiplication column/row mismatch");
     }
 
