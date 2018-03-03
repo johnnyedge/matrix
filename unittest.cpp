@@ -75,6 +75,10 @@ TEST(matrix, transpose)
             EXPECT_EQ(m.at(i, j), t.at(j, i));
         }
     }
+
+    t = t.transpose();
+
+    EXPECT_EQ(m, t);
 }
 
 TEST(matrix, matrix_multiply)
