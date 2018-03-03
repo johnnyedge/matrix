@@ -65,6 +65,10 @@ private:
 
     std::vector<std::vector<element_type>> _elements;
     order_type _order;
+
+    std::pair<size_type, size_type> foreach(
+        const std::function<bool(size_type, size_type,
+                                 element_type)> & each) const;
 };
 
 #include "matrix.tpp"

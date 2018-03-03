@@ -120,12 +120,12 @@ matrix<T> matrix<T>::multiply(const matrix<element_type> & rhs) const
             "matrix multiplication column/row mismatch");
     }
 
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
+    for (size_type i = 0; i < m; i++) {
+        for (size_type j = 0; j < n; j++) {
             element_type & sum = res(i, j);
 
             sum = 0;
-            for (int k = 0; k < p; k++) {
+            for (size_type k = 0; k < p; k++) {
                 sum += (*this)(i, k) * rhs(k, j);
             }
         }
@@ -164,11 +164,14 @@ matrix<T> matrix<T>::operator *(const element_type & rhs) const
 template <typename T>
 matrix<T> & matrix<T>::operator *=(const element_type & rhs)
 {
-    for (int i = 0; i < size().first; i++) {
-        for (int j = 0; j < size().second; j++) {
-            (*this)(i, j) *= rhs;
-        }
-    }
+    transform(
+        [&rhs]
+        (const size_type /* ignored */,
+         const size_type /* ignored */,
+         const int val)
+        {
+            return val * rhs;
+        });
 
     return *this;
 }
@@ -176,19 +179,19 @@ matrix<T> & matrix<T>::operator *=(const element_type & rhs)
 template <typename T>
 bool matrix<T>::operator ==(const matrix<element_type> & rhs) const
 {
-    if (size() != rhs.size()) {
-        return false;
-    }
+    const std::function<bool(size_type, size_type,
+                             element_type)> each =
+        [&rhs]
+        (const size_type row,
+         const size_type col,
+         const element_type val)
+        {
+            return val == rhs(row, col);
+        };
 
-    for (int i = 0; i < size().first; i++) {
-        for (int j = 0; j < size().second; j++) {
-            if ((*this)(i, j) != rhs(i, j)) {
-                return false;
-            }
-        }
-    }
+    const std::pair<size_type, size_type> this_size = size();
 
-    return true;
+    return this_size == rhs.size() && this_size == foreach(each);
 }
 
 template <typename T>
@@ -229,11 +232,18 @@ template <typename T>
 void matrix<T>::foreach(const std::function<void(size_type, size_type,
                                                  element_type)> & each) const
 {
-    for (int i = 0; i < size().first; i++) {
-        for (int j = 0; j < size().second; j++) {
-            each(i, j, (*this)(i, j));
-        }
-    }
+    const std::function<bool(size_type, size_type,
+                             element_type)> _each =
+        [&each]
+        (const size_type row,
+         const size_type col,
+         const element_type val)
+        {
+            each(row, col, val);
+            return true;
+        };
+
+    foreach(_each);
 }
 
 template <typename T>
@@ -241,12 +251,40 @@ void matrix<T>::transform(
     const std::function<element_type(size_type, size_type,
                                      element_type)> & xfrm)
 {
-    for (int i = 0; i < size().first; i++) {
-        for (int j = 0; j < size().second; j++) {
-            element_type & elem = (*this)(i, j);
-            elem = xfrm(i, j, elem);
+    const std::function<void(size_type, size_type,
+                             element_type)> each =
+        [this, &xfrm]
+        (const size_type row,
+         const size_type col,
+         const element_type val)
+        {
+            (*this)(row, col) = xfrm(row, col, val);
+        };
+
+    foreach(each);
+}
+
+template <typename T>
+std::pair<typename matrix<T>::size_type,
+          typename matrix<T>::size_type>
+matrix<T>::foreach(const std::function<bool(size_type, size_type,
+                                            element_type)> & each) const
+{
+    size_type i, j;
+
+    for (i = 0; i < size().first; i++) {
+        for (j = 0; j < size().second; j++) {
+            if (!each(i, j, (*this)(i, j))) {
+                break;
+            }
+        }
+
+        if (j != size().second) {
+            break;
         }
     }
+
+    return std::make_pair(i, j);
 }
 
 /*
