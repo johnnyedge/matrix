@@ -152,13 +152,13 @@ public:
     /*!
      * @brief Multiply the current matrix by the supplied matrix
      *
-     * The two matricies involved must be compatible; that is, the
+     * The two matrices involved must be compatible; that is, the
      * number rows in `*this` must be equal to the number of columns
      * in `rhs`. The resulting matrix will have a number of rows equal
      * to the number of rows in `*this` and a number of columns equal
      * to the number of columns in `rhs`.
      *
-     * If the two matricies are not dimensionally compatible for
+     * If the two matrices are not dimensionally compatible for
      * multiplication, std::domain_error will be thrown.
      *
      * The complexity of this operation is `m * n * p` where `m` is the
@@ -168,7 +168,7 @@ public:
      *
      * @param[in] rhs The matrix by which to multiply `*this`
      *
-     * @return The product of the two matricies
+     * @return The product of the two matrices
      *
      * @note An explanation of the matrix multiplication operation can be
      *       found at: https://en.wikipedia.org/wiki/Matrix_multiplication
@@ -187,19 +187,19 @@ public:
     matrix<element_type> multiply(const element_type & rhs) const;
 
     /*!
-     * @brief Multiply two matricies
+     * @brief Multiply two matrices
      *
      * This function enables matrix multiplication via the `x * y` syntax
-     * where `x` and `y` are compatible matricies.
+     * where `x` and `y` are compatible matrices.
      *
      * @see multiply(const matrix<element_type> &) const
      */
     matrix<element_type> operator *(const matrix<element_type> & rhs) const;
     /*!
-     * @brief Multiply two matricies, storing the result in `*this`
+     * @brief Multiply two matrices, storing the result in `*this`
      *
      * This function enables matrix multiplication via the `x *= y` syntax
-     * where `x` and `y` are compatible matricies.
+     * where `x` and `y` are compatible matrices.
      *
      * @return A reference to `*this`
      *
@@ -227,20 +227,20 @@ public:
     matrix<element_type> & operator *=(const element_type & rhs);
 
     /*!
-     * @brief Compare two matricies for equality
+     * @brief Compare two matrices for equality
      *
      * This function enables the `x == y` syntax where both `x`
-     * and `y` are matricies.
+     * and `y` are matrices.
      *
-     * Two matricies compare as equal when they are dimensionally equivalent,
+     * Two matrices compare as equal when they are dimensionally equivalent,
      * and all elements in each of the corresponding locations are equal.
      *
-     * @retval true The matricies are equivalent
-     * @retval false The matricies are not equivalent
+     * @retval true The matrices are equivalent
+     * @retval false The matrices are not equivalent
      */
     bool operator ==(const matrix<element_type> & rhs) const;
     /*!
-     * @brief Compare two matricies for inequality
+     * @brief Compare two matrices for inequality
      *
      * @see operator ==(const matrix<element_type> &) const
      */
