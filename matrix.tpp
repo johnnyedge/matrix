@@ -103,19 +103,29 @@ matrix<T> matrix<T>::transpose(void) const
 template <typename T>
 matrix<T> matrix<T>::multiply(const matrix<element_type> & rhs) const
 {
-    matrix<element_type> res(rows(), rhs.columns());
+    /*
+     * m is the number of rows in the result
+     * n is the number of columns in the result
+     * p is the number of rows in *this and should
+     *   be the number of columns in rhs
+     */
+    const size_type m = size().first;
+    const size_type n = rhs.size().second;
+    const size_type p = size().second;
 
-    if (columns() != rhs.rows()) {
+    matrix<element_type> res(m, n);
+
+    if (p != rhs.size().first) {
         throw std::domain_error(
             "matrix multiplication column/row mismatch");
     }
 
-    for (int i = 0; i < res.rows(); i++) {
-        for (int j = 0; j < res.columns(); j++) {
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
             element_type & sum = res(i, j);
 
             sum = 0;
-            for (int k = 0; k < columns(); k++) {
+            for (int k = 0; k < p; k++) {
                 sum += (*this)(i, k) * rhs(k, j);
             }
         }
@@ -154,8 +164,8 @@ matrix<T> matrix<T>::operator *(const element_type & rhs) const
 template <typename T>
 matrix<T> & matrix<T>::operator *=(const element_type & rhs)
 {
-    for (int i = 0; i < rows(); i++) {
-        for (int j = 0; j < columns(); j++) {
+    for (int i = 0; i < size().first; i++) {
+        for (int j = 0; j < size().second; j++) {
             (*this)(i, j) *= rhs;
         }
     }
@@ -166,13 +176,12 @@ matrix<T> & matrix<T>::operator *=(const element_type & rhs)
 template <typename T>
 bool matrix<T>::operator ==(const matrix<element_type> & rhs) const
 {
-    if (rows() != rhs.rows() ||
-        columns() != rhs.columns()) {
+    if (size() != rhs.size()) {
         return false;
     }
 
-    for (int i = 0; i < rows(); i++) {
-        for (int j = 0; j < columns(); j++) {
+    for (int i = 0; i < size().first; i++) {
+        for (int j = 0; j < size().second; j++) {
             if ((*this)(i, j) != rhs(i, j)) {
                 return false;
             }
@@ -189,15 +198,31 @@ bool matrix<T>::operator !=(const matrix<element_type> & rhs) const
 }
 
 template <typename T>
-typename matrix<T>::size_type matrix<T>::rows(void) const
+std::pair<typename matrix<T>::size_type, typename matrix<T>::size_type>
+matrix<T>::size(void) const
 {
-    return (_order == ROWS) ? _elements.size() : _elements.at(0).size();
+    size_type rows, cols;
+
+    rows = _elements.size();
+    cols = rows ? _elements.at(0).size() : 0;
+
+    if (_order == COLS) {
+        std::swap(rows, cols);
+    }
+
+    return std::make_pair(rows, cols);
 }
 
 template <typename T>
-typename matrix<T>::size_type matrix<T>::columns(void) const
+bool matrix<T>::empty(void) const
 {
-    return (_order == COLS) ? _elements.size() : _elements.at(0).size();
+    return _elements.empty();
+}
+
+template <typename T>
+void matrix<T>::clear(void)
+{
+    _elements.clear();
 }
 
 /*

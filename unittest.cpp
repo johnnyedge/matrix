@@ -10,20 +10,30 @@ TEST(matrix, basic)
 
     matrix<int> m(4, 3);
 
-    EXPECT_EQ(m.rows(), 4);
-    EXPECT_EQ(m.columns(), 3);
+    EXPECT_EQ(m.size().first, 4);
+    EXPECT_EQ(m.size().second, 3);
 
-    for (int i = 0; i < m.rows(); i++) {
-        for (int j = 0; j < m.columns(); j++) {
-            m.at(i, j) = i * m.columns() + j;
+    for (int i = 0; i < m.size().first; i++) {
+        for (int j = 0; j < m.size().second; j++) {
+            m.at(i, j) = i * m.size().second + j;
         }
     }
 
-    for (int i = 0; i < m.rows(); i++) {
-        for (int j = 0; j < m.columns(); j++) {
-            EXPECT_EQ(m.at(i, j), i * m.columns() + j);
+    for (int i = 0; i < m.size().first; i++) {
+        for (int j = 0; j < m.size().second; j++) {
+            EXPECT_EQ(m.at(i, j), i * m.size().second + j);
         }
     }
+
+    EXPECT_THROW(m.at(m.size().first, 0), std::out_of_range);
+    EXPECT_THROW(m.at(0, m.size().second), std::out_of_range);
+
+    m.clear();
+
+    EXPECT_TRUE(m.empty());
+
+    EXPECT_EQ(m.size().first, 0);
+    EXPECT_EQ(m.size().second, 0);
 }
 
 TEST(matrix, equality)
@@ -56,22 +66,22 @@ TEST(matrix, transpose)
     matrix<int> m(4, 3);
     matrix<int> t;
 
-    EXPECT_EQ(m.rows(), 4);
-    EXPECT_EQ(m.columns(), 3);
+    EXPECT_EQ(m.size().first, 4);
+    EXPECT_EQ(m.size().second, 3);
 
-    for (int i = 0; i < m.rows(); i++) {
-        for (int j = 0; j < m.columns(); j++) {
-            m.at(i, j) = i * m.columns() + j;
+    for (int i = 0; i < m.size().first; i++) {
+        for (int j = 0; j < m.size().second; j++) {
+            m.at(i, j) = i * m.size().second + j;
         }
     }
 
     t = m.transpose();
 
-    EXPECT_EQ(m.rows(), t.columns());
-    EXPECT_EQ(m.columns(), t.rows());
+    EXPECT_EQ(m.size().first, t.size().second);
+    EXPECT_EQ(m.size().second, t.size().first);
 
-    for (int i = 0; i < m.rows(); i++) {
-        for (int j = 0; j < m.columns(); j++) {
+    for (int i = 0; i < m.size().first; i++) {
+        for (int j = 0; j < m.size().second; j++) {
             EXPECT_EQ(m.at(i, j), t.at(j, i));
         }
     }
@@ -86,9 +96,9 @@ TEST(matrix, matrix_multiply)
     matrix<int> m(4, 3);
     matrix<int> n, p;
 
-    for (int i = 0; i < m.rows(); i++) {
-        for (int j = 0; j < m.columns(); j++) {
-            m.at(i, j) = i * m.columns() + j;
+    for (int i = 0; i < m.size().first; i++) {
+        for (int j = 0; j < m.size().second; j++) {
+            m.at(i, j) = i * m.size().second + j;
         }
     }
 
@@ -97,8 +107,8 @@ TEST(matrix, matrix_multiply)
 
     p = m * n;
 
-    EXPECT_EQ(p.rows(), m.rows());
-    EXPECT_EQ(p.columns(), n.columns());
+    EXPECT_EQ(p.size().first, m.size().first);
+    EXPECT_EQ(p.size().second, n.size().second);
 
     /*
      *  0  1  2     0  3  6  9      5  14  23  32
@@ -130,16 +140,16 @@ TEST(matrix, scalar_multiply)
     matrix<int> m(4, 3);
     matrix<int> n;
 
-    for (int i = 0; i < m.rows(); i++) {
-        for (int j = 0; j < m.columns(); j++) {
-            m.at(i, j) = i * m.columns() + j;
+    for (int i = 0; i < m.size().first; i++) {
+        for (int j = 0; j < m.size().second; j++) {
+            m.at(i, j) = i * m.size().second + j;
         }
     }
 
     n = m * 3;
 
-    for (int i = 0; i < m.rows(); i++) {
-        for (int j = 0; j < m.columns(); j++) {
+    for (int i = 0; i < m.size().first; i++) {
+        for (int j = 0; j < m.size().second; j++) {
             EXPECT_EQ(n.at(i, j), 3 * m.at(i, j));
         }
     }

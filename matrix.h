@@ -43,8 +43,10 @@ public:
     bool operator ==(const matrix<element_type> & rhs) const;
     bool operator !=(const matrix<element_type> & rhs) const;
 
-    size_type rows(void) const;
-    size_type columns(void) const;
+    std::pair<size_type, size_type> size(void) const;
+    bool empty(void) const;
+
+    void clear(void);
 
 private:
     typedef enum
