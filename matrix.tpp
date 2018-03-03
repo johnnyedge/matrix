@@ -111,7 +111,7 @@ matrix<T> matrix<T>::multiply(const matrix<element_type> & rhs) const
      * m is the number of rows in the result
      * n is the number of columns in the result
      * p is the number of rows in *this and should
-     *   be the number of columns in rhs
+     *   match the number of columns in rhs
      */
     const size_type m = size().first;
     const size_type n = rhs.size().second;
