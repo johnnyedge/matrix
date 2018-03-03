@@ -17,11 +17,14 @@ TEST(matrix, basic)
         EXPECT_EQ(m.size().first, rows);
         EXPECT_EQ(m.size().second, cols);
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                m.at(i, j) = i * cols + j;
-            }
-        }
+        m.transform(
+            [cols]
+            (const std::size_t row,
+             const std::size_t col,
+             const int /* ignored */)
+            {
+                return row * cols + col;
+            });
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -54,11 +57,27 @@ TEST(matrix, equality)
 
         int v;
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                m.at(i, j) = n(i, j) = rand();
-            }
-        }
+        m.transform(
+            [&x]
+            (const std::size_t row,
+             const std::size_t col,
+             const int /* ignored */)
+            {
+                int v = rand();
+                x(row, col) = v;
+                return v + 1;
+            });
+
+        n = m;
+
+        m.foreach(
+            [n]
+            (const std::size_t row,
+             const std::size_t col,
+             const int val)
+            {
+                EXPECT_EQ(n(row, col), val);
+            });
 
         EXPECT_EQ(m, n);
         EXPECT_NE(m, x);
@@ -76,28 +95,34 @@ TEST(matrix, transpose)
         const int cols = 1 + rand() % 100;
 
         matrix<int> m(rows, cols);
-        matrix<int> t;
+        matrix<int> n;
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                m.at(i, j) = rand();
-            }
-        }
+        m.transform(
+            []
+            (const std::size_t /* ignored */,
+             const std::size_t /* ignored */,
+             const int /* ignored */)
+            {
+                return rand();
+            });
 
-        t = m.transpose();
+        n = m.transpose();
 
-        EXPECT_EQ(m.size().first, t.size().second);
-        EXPECT_EQ(m.size().second, t.size().first);
+        ASSERT_EQ(m.size().first, n.size().second);
+        ASSERT_EQ(m.size().second, n.size().first);
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                EXPECT_EQ(m.at(i, j), t.at(j, i));
-            }
-        }
+        m.foreach(
+            [n]
+            (const std::size_t row,
+             const std::size_t col,
+             const int val)
+            {
+                EXPECT_EQ(n(col, row), val);
+            });
 
-        t = t.transpose();
+        n = n.transpose();
 
-        EXPECT_EQ(m, t);
+        EXPECT_EQ(m, n);
     }
 }
 
@@ -106,11 +131,14 @@ TEST(matrix, matrix_multiply)
     matrix<int> m(4, 3);
     matrix<int> n, p;
 
-    for (int i = 0; i < m.size().first; i++) {
-        for (int j = 0; j < m.size().second; j++) {
-            m.at(i, j) = i * m.size().second + j;
-        }
-    }
+    m.transform(
+        []
+        (const std::size_t row,
+         const std::size_t col,
+         const int /* ignored */)
+        {
+            return row * 3 + col;
+        });
 
     EXPECT_THROW(m * m, std::logic_error);
     n = m.transpose();
@@ -155,19 +183,25 @@ TEST(matrix, scalar_multiply)
         matrix<int> n;
         int v;
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                m.at(i, j) = i * cols + j;
-            }
-        }
+        m.transform(
+            [cols]
+            (const std::size_t row,
+             const std::size_t col,
+             const int /* ignored */)
+            {
+                return row * cols + col;
+            });
 
         v = rand() % 100;
         n = m * v;
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                EXPECT_EQ(n.at(i, j), v * m.at(i, j));
-            }
-        }
+        m.foreach(
+            [n, v]
+            (const std::size_t row,
+             const std::size_t col,
+             const int val)
+            {
+                EXPECT_EQ(n.at(row, col), v * val);
+            });
     }
 }

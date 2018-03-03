@@ -6,6 +6,9 @@
  */
 #pragma once
 
+#include <functional>
+#include <cstddef>
+
 template <typename T>
 class matrix
 {
@@ -47,6 +50,11 @@ public:
     bool empty(void) const;
 
     void clear(void);
+
+    void foreach(const std::function<void(size_type, size_type,
+                                          element_type)> & each) const;
+    void transform(const std::function<element_type(size_type, size_type,
+                                                    element_type)> & xfrm);
 
 private:
     typedef enum

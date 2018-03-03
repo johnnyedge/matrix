@@ -225,6 +225,30 @@ void matrix<T>::clear(void)
     _elements.clear();
 }
 
+template <typename T>
+void matrix<T>::foreach(const std::function<void(size_type, size_type,
+                                                 element_type)> & each) const
+{
+    for (int i = 0; i < size().first; i++) {
+        for (int j = 0; j < size().second; j++) {
+            each(i, j, (*this)(i, j));
+        }
+    }
+}
+
+template <typename T>
+void matrix<T>::transform(
+    const std::function<element_type(size_type, size_type,
+                                     element_type)> & xfrm)
+{
+    for (int i = 0; i < size().first; i++) {
+        for (int j = 0; j < size().second; j++) {
+            element_type & elem = (*this)(i, j);
+            elem = xfrm(i, j, elem);
+        }
+    }
+}
+
 /*
  * local variables:
  * mode: c++
