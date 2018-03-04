@@ -15,7 +15,7 @@ also use the `--target <target>` argument to it. Valid targets are:
              may be necessary)
 * `doxygen`: builds documentation in html format (and attempts to display it in your browser)
              using the `doxygen` program (which will need to be installed/available on your
-             system.
+             system)
 
 By default, the `run_tests` target is executed.
 
