@@ -49,7 +49,7 @@ matrix<T>::matrix(const size_type rows, const size_type cols)
 
 /* copy constructor */
 template <typename T>
-matrix<T>::matrix(const matrix & other)
+matrix<T>::matrix(const matrix<T> & other)
     : _elements(other._elements), _order(other._order)
 {
 }
@@ -59,7 +59,7 @@ matrix<T>::matrix(const matrix & other)
  * of std::vector move constructor
  */
 template <typename T>
-matrix<T>::matrix(matrix && other)
+matrix<T>::matrix(matrix<T> && other)
     : _elements(std::move(other._elements)), _order(other._order)
 {
 }
