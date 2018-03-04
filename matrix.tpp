@@ -11,7 +11,7 @@ matrix<T>::~matrix(void)
 }
 
 /*
- * default constructor just initialized to empty matrix
+ * default constructor just initializes to empty matrix
  */
 template <typename T>
 matrix<T>::matrix(void)
