@@ -409,10 +409,11 @@ std::pair<typename matrix<T>::size_type,
 matrix<T>::foreach(const std::function<bool(size_type, size_type,
                                             element_type)> & each) const
 {
+    const std::pair<size_type, size_type> this_size = size();
     size_type i, j;
 
-    for (i = 0; i < size().first; i++) {
-        for (j = 0; j < size().second; j++) {
+    for (i = 0; i < this_size.first; i++) {
+        for (j = 0; j < this_size.second; j++) {
             /*
              * processing stops if the supplied
              * function returns false
@@ -427,7 +428,7 @@ matrix<T>::foreach(const std::function<bool(size_type, size_type,
          * if the inner loop stopped early,
          * this one stops early, too
          */
-        if (j != size().second) {
+        if (j != this_size.second) {
             break;
         }
     }
