@@ -24,3 +24,5 @@ archive/shared object is generated nor installed.
 
 Finally, the unit tests can be controlled by setting environmental variables when executing the
 `run_tests` target. See https://github.com/google/googletest/blob/master/googletest/docs/AdvancedGuide.md#running-test-programs-advanced-options
+
+The code was most recently built/tested with gcc 7.2.0, cmake 3.10.2, and doxygen 1.8.13.
